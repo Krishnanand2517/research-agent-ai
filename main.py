@@ -1,3 +1,4 @@
+from langchain_core.messages import AIMessage, ToolMessage
 from agent import agent
 
 
@@ -14,38 +15,47 @@ def main():
 
         print_separator()
         print("🧠 Agent starting...\n")
+        final_started = False
+        seen_tool_calls = set()
 
-        for step in agent.stream(
-            {"messages": [{"role": "user", "content": query}]}, stream_mode="updates"
+        for chunk, metadata in agent.stream(
+            {"messages": [{"role": "user", "content": query}]},
+            stream_mode="messages",
         ):
-            for node, output in step.items():
-                if "messages" not in output:
-                    continue
+            # TOOL CALL
+            if isinstance(chunk, AIMessage) and chunk.tool_calls:
+                for tool in chunk.tool_calls:
+                    name = tool.get("name")
+                    args = tool.get("args")
 
-                message = output["messages"][-1]
+                    if not name:
+                        continue
 
-                # MODEL THINKING
-                if (
-                    node == "model"
-                    and hasattr(message, "tool_calls")
-                    and message.tool_calls
-                ):
-                    for tool in message.tool_calls:
-                        print("🧠 Thinking...")
-                        print(f"🔧 Calling tool: {tool['name']}")
-                        print(f"   args: {tool['args']}\n")
+                    key = f"{name}-{args}"
 
-                # TOOL RESULT
-                elif node == "tools":
-                    print("📦 Tool returned results:\n")
-                    print(message.content)
-                    print()
+                    if key in seen_tool_calls:
+                        continue
 
-                # FINAL ANSWER
-                elif node == "model":
-                    if message.content:
-                        print("🤖 Final Answer:\n")
-                        print(message.content)
+                    seen_tool_calls.add(key)
+
+                    print("\n🧠 Thinking...")
+                    print(f"🔧 Calling tool: {tool['name']}")
+
+            # TOOL RESULT
+            elif isinstance(chunk, ToolMessage):
+                print("📦 Tool returned results:\n")
+                print(chunk.content)
+                print()
+
+            # LIVE TOKEN STREAMING
+            elif isinstance(chunk, AIMessage):
+                if chunk.content:
+                    if not final_started:
+                        print_separator()
+                        print("✅ Final Answer\n")
+                        final_started = True
+
+                    print(chunk.content, end="", flush=True)
 
         print_separator()
 

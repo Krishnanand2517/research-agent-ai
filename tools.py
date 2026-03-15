@@ -10,6 +10,7 @@ def search_web(query: str, max_results: int = 5) -> list[SearchResult]:
     - url
     - snippet
     """
+    print(f"🔧 search called with: {query}")
 
     results = []
 
