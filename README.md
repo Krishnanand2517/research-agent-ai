@@ -9,6 +9,20 @@ A simple AI-powered research assistant that answers questions by searching the w
 3. GPT-4.1-mini analyzes the results and produces a summary with source URLs.
 4. The response streams to your terminal token by token.
 
+## Tech stack
+ 
+- **[LangChain](https://www.langchain.com)**: agent framework and tool orchestration
+- **[LangGraph](https://www.langchain.com/langgraph)**: stateful agent execution and streaming
+- **[OpenAI GPT-4.1-mini](https://developers.openai.com/api/docs/models/gpt-4.1-mini)**: the underlying LLM
+- **[ddgs](https://github.com/deedy5/ddgs)**: search client for web lookups
+
+## Demo
+
+<video width="320" height="240" controls>
+  <source src="./docs_media/Research_Agent_Demo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## Requirements
  
 - Python 3.12+
