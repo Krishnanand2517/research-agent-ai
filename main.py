@@ -1,6 +1,10 @@
 from agent import agent
 
 
+def print_separator():
+    print("\n" + "=" * 40 + "\n")
+
+
 def main():
     while True:
         query = input("\nAsk a research question (or 'exit'): ")
@@ -8,7 +12,8 @@ def main():
         if query.lower() == "exit":
             break
 
-        print("\n--- Agent Steps ---\n")
+        print_separator()
+        print("🧠 Agent starting...\n")
 
         for step in agent.stream(
             {"messages": [{"role": "user", "content": query}]}, stream_mode="updates"
@@ -19,20 +24,30 @@ def main():
 
                 message = output["messages"][-1]
 
-                print(f"\nNODE: {node}")
-                print("TYPE:", type(message).__name__)
+                # MODEL THINKING
+                if (
+                    node == "model"
+                    and hasattr(message, "tool_calls")
+                    and message.tool_calls
+                ):
+                    for tool in message.tool_calls:
+                        print("🧠 Thinking...")
+                        print(f"🔧 Calling tool: {tool['name']}")
+                        print(f"   args: {tool['args']}\n")
 
-                if hasattr(message, "tool_calls") and message.tool_calls:
-                    print("TOOL CALL:", message.tool_calls)
-
-                elif message.__class__.__name__ == "ToolMessage":
-                    print("TOOL RESULT:")
+                # TOOL RESULT
+                elif node == "tools":
+                    print("📦 Tool returned results:\n")
                     print(message.content)
+                    print()
 
-                else:
-                    print("Answer:", message.content)
+                # FINAL ANSWER
+                elif node == "model":
+                    if message.content:
+                        print("🤖 Final Answer:\n")
+                        print(message.content)
 
-        print("\n------------------\n")
+        print_separator()
 
 
 if __name__ == "__main__":
