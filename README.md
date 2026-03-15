@@ -16,13 +16,6 @@ A simple AI-powered research assistant that answers questions by searching the w
 - **[OpenAI GPT-4.1-mini](https://developers.openai.com/api/docs/models/gpt-4.1-mini)**: the underlying LLM
 - **[ddgs](https://github.com/deedy5/ddgs)**: search client for web lookups
 
-## Demo
-
-<video width="320" height="240" controls>
-  <source src="./docs_media/Research_Agent_Demo.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-
 ## Requirements
  
 - Python 3.12+
