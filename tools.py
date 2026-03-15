@@ -1,13 +1,22 @@
-from duckduckgo_search import DDGS
+from ddgs import DDGS
+from schema import SearchResult
 
 
-def search_web(query: str, max_results: int = 5) -> str:
+def search_web(query: str, max_results: int = 5) -> list[SearchResult]:
+    """
+    Search the web and return a list of results.
+    Each result contains:
+    - title
+    - url
+    - snippet
+    """
+
     results = []
 
     with DDGS() as ddgs:
         for r in ddgs.text(query, max_results=max_results):
             results.append(
-                {f"Title: {r['title']}\nURL: {r['href']}\nSnippet: {r['body']}\n"}
+                {"title": r["title"], "url": r["href"], "snippet": r["body"]}
             )
 
-    return "\n---\n".join(results)
+    return results

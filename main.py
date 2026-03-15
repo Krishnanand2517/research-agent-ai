@@ -8,10 +8,31 @@ def main():
         if query.lower() == "exit":
             break
 
-        response = agent.invoke({"messages": [{"role": "user", "content": query}]})
+        print("\n--- Agent Steps ---\n")
 
-        print("\nAnswer:\n")
-        print(response["messages"][-1].content)
+        for step in agent.stream(
+            {"messages": [{"role": "user", "content": query}]}, stream_mode="updates"
+        ):
+            for node, output in step.items():
+                if "messages" not in output:
+                    continue
+
+                message = output["messages"][-1]
+
+                print(f"\nNODE: {node}")
+                print("TYPE:", type(message).__name__)
+
+                if hasattr(message, "tool_calls") and message.tool_calls:
+                    print("TOOL CALL:", message.tool_calls)
+
+                elif message.__class__.__name__ == "ToolMessage":
+                    print("TOOL RESULT:")
+                    print(message.content)
+
+                else:
+                    print("Answer:", message.content)
+
+        print("\n------------------\n")
 
 
 if __name__ == "__main__":

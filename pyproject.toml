@@ -5,7 +5,7 @@ description = "An AI Web Research Agent"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "duckduckgo-search>=8.1.1",
+    "ddgs>=9.11.4",
     "langchain>=1.2.12",
     "langchain-openai>=1.1.11",
     "langgraph>=1.1.2",
